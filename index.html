@@ -6,6 +6,8 @@
   <title>VRView Camera Access</title>
 
   <!-- Inclua a biblioteca VRView -->
+  <script src="https://cdn.jsdelivr.net/npm/three@110.0.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/webvr-polyfill@0.12.1/dist/webvr-polyfill.min.js"></script>
   <script src="https://storage.googleapis.com/vrview/2.0/build/vrview.min.js"></script>
 </head>
 <body>
@@ -17,7 +19,6 @@
   <script>
     // Configurações para o VRView
     const vrView = new VRView.Player('#vrview', {
-      image: 'placeholder.png', // Imagem de placeholder
       is_stereo: false, // Configuração para vídeo monoscópico
     });
 
