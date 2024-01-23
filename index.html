@@ -59,9 +59,7 @@
           const imageDataUrl = canvas.toDataURL('image/png');
 
           // Atualiza o conteúdo do VRView com a nova imagem capturada
-          vrView.setContent({
-            image: imageDataUrl,
-          });
+          vrView.image = imageDataUrl;
         })
         .catch((error) => {
           console.error('Erro ao capturar a imagem:', error);
