@@ -32,7 +32,7 @@
     function initCamera() {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then((stream) => {
-          vrView.setContentInfo({
+          vrView.setContent({
             video: stream,
           });
 
@@ -55,10 +55,8 @@
           // Converte a imagem capturada para dados URL
           const imageDataUrl = canvas.toDataURL('image/png');
 
-          // Atualiza o conteúdo do VRView com a nova imagem capturada
-          vrView.setContentInfo({
-            image: imageDataUrl,
-          });
+          // Atualiza a propriedade 'image' do VRView.Player com a nova imagem capturada
+          vrView.image = imageDataUrl;
         })
         .catch((error) => {
           console.error('Erro ao capturar a imagem:', error);
