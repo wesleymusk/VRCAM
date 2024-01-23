@@ -3,15 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VRView Camera Access</title>
+  <title>VRView Camera Auto Capture</title>
 
   <!-- Inclua a biblioteca VRView -->
   <script src="https://cdn.jsdelivr.net/npm/three@110.0.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/webvr-polyfill@0.12.1/dist/webvr-polyfill.min.js"></script>
   <script src="https://storage.googleapis.com/vrview/2.0/build/vrview.min.js"></script>
+
+  <!-- Inclua a biblioteca html2canvas -->
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+  <!-- Inclua a biblioteca FileSaver.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </head>
 <body>
-  <h1>VRView Camera Access</h1>
+  <h1>VRView Camera Auto Capture</h1>
 
   <!-- Div para renderizar o VRView -->
   <div id="vrview"></div>
@@ -29,6 +35,9 @@
           vrView.setContentInfo({
             video: stream,
           });
+
+          // Inicia a captura automática de imagens a cada 50 milissegundos
+          setInterval(captureAndDisplayImage, 50);
         })
         .catch((error) => {
           console.error('Erro ao acessar a câmera:', error);
@@ -37,6 +46,24 @@
 
     // Chama a função para iniciar a câmera quando o documento estiver pronto
     document.addEventListener('DOMContentLoaded', initCamera);
+
+    // Função para capturar e exibir a imagem
+    function captureAndDisplayImage() {
+      // Captura o conteúdo da div do VRView
+      html2canvas(document.getElementById('vrview'))
+        .then((canvas) => {
+          // Converte a imagem capturada para dados URL
+          const imageDataUrl = canvas.toDataURL('image/png');
+
+          // Atualiza o conteúdo do VRView com a nova imagem capturada
+          vrView.setContentInfo({
+            image: imageDataUrl,
+          });
+        })
+        .catch((error) => {
+          console.error('Erro ao capturar a imagem:', error);
+        });
+    }
   </script>
 </body>
 </html>
