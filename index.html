@@ -45,7 +45,9 @@
     }
 
     // Chama a função para iniciar a câmera quando o documento estiver pronto
-    document.addEventListener('DOMContentLoaded', initCamera);
+    document.addEventListener('DOMContentLoaded', () => {
+      vrView.on('ready', initCamera);
+    });
 
     // Função para capturar e exibir a imagem
     function captureAndDisplayImage() {
@@ -55,8 +57,10 @@
           // Converte a imagem capturada para dados URL
           const imageDataUrl = canvas.toDataURL('image/png');
 
-          // Atualiza a propriedade 'image' do VRView.Player com a nova imagem capturada
-          vrView.image = imageDataUrl;
+          // Atualiza o conteúdo do VRView com a nova imagem capturada
+          vrView.setContent({
+            image: imageDataUrl,
+          });
         })
         .catch((error) => {
           console.error('Erro ao capturar a imagem:', error);
