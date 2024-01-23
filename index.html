@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VRView Camera Access</title>
+
+  <!-- Inclua a biblioteca VRView -->
+  <script src="https://storage.googleapis.com/vrview/2.0/build/vrview.min.js"></script>
+</head>
+<body>
+  <h1>VRView Camera Access</h1>
+
+  <!-- Div para renderizar o VRView -->
+  <div id="vrview"></div>
+
+  <script>
+    // Configurações para o VRView
+    const vrView = new VRView.Player('#vrview', {
+      image: 'placeholder.jpg', // Imagem de placeholder
+      is_stereo: false, // Configuração para vídeo monoscópico
+    });
+
+    // Adiciona a função para iniciar a câmera
+    function initCamera() {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+          vrView.setContentInfo({
+            video: stream,
+          });
+        })
+        .catch((error) => {
+          console.error('Erro ao acessar a câmera:', error);
+        });
+    }
+
+    // Chama a função para iniciar a câmera quando o documento estiver pronto
+    document.addEventListener('DOMContentLoaded', initCamera);
+  </script>
+</body>
+</html>
