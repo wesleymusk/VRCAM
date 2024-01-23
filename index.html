@@ -9,12 +9,6 @@
   <script src="https://cdn.jsdelivr.net/npm/three@110.0.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/webvr-polyfill@0.12.1/dist/webvr-polyfill.min.js"></script>
   <script src="https://storage.googleapis.com/vrview/2.0/build/vrview.min.js"></script>
-
-  <!-- Inclua a biblioteca html2canvas -->
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
-  <!-- Inclua a biblioteca FileSaver.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </head>
 <body>
   <h1>VRView Camera Auto Capture</h1>
@@ -25,20 +19,28 @@
   <script>
     // Configurações para o VRView
     const vrView = new VRView.Player('#vrview', {
-      image: 'placeholder.png',
       is_stereo: false, // Configuração para vídeo monoscópico
     });
 
-    // Adiciona a função para iniciar a câmera
+    // Variáveis para a câmera e o gravador de mídia
+    let mediaStream;
+    let mediaRecorder;
+
+    // Adiciona a função para iniciar a câmera e o gravador de mídia
     function initCamera() {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then((stream) => {
+          mediaStream = stream;
+
+          // Atualiza o conteúdo do VRView com a câmera
           vrView.setContent({
             video: stream,
           });
 
-          // Inicia a captura automática de imagens a cada 50 milissegundos
-          setInterval(captureAndDisplayImage, 50);
+          // Inicia o gravador de mídia para capturar frames da câmera
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.ondataavailable = handleDataAvailable;
+          mediaRecorder.start();
         })
         .catch((error) => {
           console.error('Erro ao acessar a câmera:', error);
@@ -50,20 +52,20 @@
       vrView.on('ready', initCamera);
     });
 
-    // Função para capturar e exibir a imagem
-    function captureAndDisplayImage() {
-      // Captura o conteúdo da div do VRView
-      html2canvas(document.getElementById('vrview'))
-        .then((canvas) => {
-          // Converte a imagem capturada para dados URL
-          const imageDataUrl = canvas.toDataURL('image/png');
+    // Função para manipular os dados disponíveis do gravador de mídia
+    function handleDataAvailable(event) {
+      if (event.data.size > 0) {
+        // Cria um objeto URL para o blob de mídia
+        const videoBlobUrl = URL.createObjectURL(event.data);
 
-          // Atualiza o conteúdo do VRView com a nova imagem capturada
-          vrView.image = imageDataUrl;
-        })
-        .catch((error) => {
-          console.error('Erro ao capturar a imagem:', error);
+        // Atualiza o conteúdo do VRView com o novo frame da câmera
+        vrView.setContent({
+          video: videoBlobUrl,
         });
+
+        // Libera o objeto URL
+        URL.revokeObjectURL(videoBlobUrl);
+      }
     }
   </script>
 </body>
